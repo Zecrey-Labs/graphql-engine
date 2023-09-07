@@ -34,6 +34,15 @@ sqlCommenterStandard qtAttributes
     createSQLComment comment = " /* " <> comment <> " */"
     attributes = _unQueryTagsAttributes qtAttributes
 
+sqlCommenterWithRedis :: QueryTagsAttributes -> QueryTagsComment
+sqlCommenterWithRedis qtAttributes
+  | null attributes = emptyQueryTagsComment
+  | otherwise = QueryTagsComment $ createSQLComment $ generateComment (NE.fromList attributes)
+  where
+    generateComment attr = commaSeparated [k <> "=" <> v | (k, v) <- NE.toList attr]
+    createSQLComment comment = " /* " <> comment <> " */"
+    attributes = _unQueryTagsAttributes qtAttributes
+
 -- | Top-level algorithm to generate the string comment from list of
 -- 'Attribute's
 -- Spec <https://google.github.io/sqlcommenter/spec/#sql-commenter>
